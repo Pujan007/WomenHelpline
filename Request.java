@@ -1,5 +1,7 @@
 package com.example.resque;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,9 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -26,35 +26,43 @@ import java.util.Iterator;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class MainActivity extends AppCompatActivity {
-  TextView textView;
-  Button button,button1,button3;
-  String code1;
-  EditText username,email,password,code;
-
-  String abc;
+public class Request extends AppCompatActivity {
+ Button button,button1;
+ EditText editText;
+ String abc;
+ int length;
+ int code;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        username=findViewById(R.id.editText);
-        email=findViewById(R.id.editText2);
-        password=findViewById(R.id.editText3);
-        code=findViewById(R.id.editText7);
+        setContentView(R.layout.activity_request);
 
 
-        button=findViewById(R.id.button);
+        button=findViewById(R.id.button3);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                  code1=code.getText().toString();
+                new Request.SendRequest().execute();
+                Handler handler=new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(length>7 )
+                        {
 
-                        new MainActivity.SendRequest().execute();
-                        Intent i=new Intent(MainActivity.this,Request.class);
-                        startActivity(i);
+                            Intent i=new Intent(Request.this,MapsActivity.class);
+                            startActivity(i);
+                        }
+                        else
+                        {
+                            Toast.makeText(Request.this,"NOT Success",Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                },5000);
+
             }
         });
-
 
     }
     public class SendRequest extends AsyncTask<String, Void, String> {
@@ -68,11 +76,10 @@ public class MainActivity extends AppCompatActivity {
 
             try{
 
-                URL url = new URL("https://helpwomen.000webhostapp.com/compare.php");
+                URL url = new URL("https://helpwomen.000webhostapp.com/codecompare.php");
 
                 JSONObject postDataParams = new JSONObject();
-                postDataParams.put("Code1",code1);
-
+                postDataParams.put("value",abc);
                 Log.e("params",postDataParams.toString());
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -119,7 +126,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         protected void onPostExecute(String result) {
-            Log.e("value", result);
+            abc=result;
+            length=abc.length();
+            Log.e("value", String.valueOf(length));
+
 
         }
     }
@@ -148,5 +158,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return result.toString();
     }
-
 }

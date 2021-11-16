@@ -1,4 +1,4 @@
-package com.example.database;
+package com.example.resque;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class Design extends AppCompatActivity {
-     Button btn;
+Button btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

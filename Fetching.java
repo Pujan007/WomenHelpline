@@ -1,16 +1,15 @@
 package com.example.resque;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -22,63 +21,60 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class MainActivity extends AppCompatActivity {
-  TextView textView;
-  Button button,button1,button3;
-  String code1;
-  EditText username,email,password,code;
-
-  String abc;
+public class Fetching extends AppCompatActivity {
+TextView textView;
+TextView textView1;
+public static final String lattitude= ("com.example.resque.lattitude");
+    public static final String longitude= ("com.example.resque.longitude");
+String abc;
+private double a,b;
+String []store;
+Button button;
+String latt,longi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        username=findViewById(R.id.editText);
-        email=findViewById(R.id.editText2);
-        password=findViewById(R.id.editText3);
-        code=findViewById(R.id.editText7);
-
-
-        button=findViewById(R.id.button);
+        setContentView(R.layout.activity_fetching);
+        textView=findViewById(R.id.textView4);
+        textView1=findViewById(R.id.textView5);
+        button=findViewById(R.id.button4);
+        new Fetching.SendRequest().execute(abc);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                  code1=code.getText().toString();
+                Intent i=new Intent(Fetching.this,MapsActivity.class);
+                i.putExtra(lattitude,a);
+                i.putExtra(longitude,b);
+                startActivity(i);
 
-                        new MainActivity.SendRequest().execute();
-                        Intent i=new Intent(MainActivity.this,Request.class);
-                        startActivity(i);
             }
         });
-
-
     }
     public class SendRequest extends AsyncTask<String, Void, String> {
 
 
-        protected void onPreExecute(){
-
-        }
+        protected void onPreExecute(){}
 
         protected String doInBackground(String... arg0) {
 
             try{
 
-                URL url = new URL("https://helpwomen.000webhostapp.com/compare.php");
+                URL url = new URL("https://helpwomen.000webhostapp.com/fetchdata.php");
 
                 JSONObject postDataParams = new JSONObject();
-                postDataParams.put("Code1",code1);
 
+                postDataParams.put("value",abc);
                 Log.e("params",postDataParams.toString());
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("POST");
+                conn.setReadTimeout(15000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("GET");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
 
@@ -117,9 +113,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
+        @Override
         protected void onPostExecute(String result) {
-            Log.e("value", result);
+            Log.e("tag",result);
+            store=result.split("/");
+            Toast.makeText(Fetching.this,"SUCCESS",Toast.LENGTH_LONG).show();
+            Log.e("MyTag",store[0]);
+//            a=Double.valueOf(store[0]);
+//            b=Double.valueOf(store[1]);
 
         }
     }
@@ -148,5 +149,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return result.toString();
     }
+    public void activity()
+    {
 
+    }
 }
